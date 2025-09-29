@@ -63,6 +63,7 @@ export LC_ALL="zh_CN.UTF-8"
 
 ### git分支操作
 * 查看本地分支：`git branch`
+* 查看分支及其关联的远程分支：`git branch -vv`
 * 创建本地分支：`git branch 分支名`
 * 切换分支（checkout）：`git checkout 分支名`
 * 创建并切换：`git checkout -b 分支名`
@@ -80,7 +81,7 @@ export LC_ALL="zh_CN.UTF-8"
 ### 配置SSH公钥
 1. 生成SSH公钥：在命令行输入`ssh-keygen -t rsa`，不断回车，如果公钥已经存在则自动覆盖。
 2. 远程仓库添加账户公钥
-    * 获取公钥：`cat ~/.ssh/id_rsa.pub
+    * 获取公钥：`cat ~/.ssh/id_rsa.pub`
     * 复制其中内容到远程仓库的公钥
     * 验证是否成功：`ssh -T git@github.com` 或者 `ssh -T git@gitee.com`
 ### 操作远程仓库
@@ -89,5 +90,38 @@ export LC_ALL="zh_CN.UTF-8"
 ```markdown
 git remote add origin ssh仓库地址
 ```
-2. 查看远程仓库：`git remote`
+2. 查看远程仓库：`git remote`，`git remote -v`
 3. 推送到远程仓库
+命令：`git push [-f] [--set-upstream] [远端名称[本地分支名][:远端分支名]]`
+> * 如果远程分支名和本地分支名相同，则只写本地分支：`git push origin master`
+> * --set-upstream 推送到远端的同时建立起和远端分支的关联关系。`git push --set-upstream origin master`
+> * 如果当前分支已经和远端分支关联，则可以直接省略分支名和远端名。`git push`
+
+4. 从远端克隆：`git clone <仓库地址> [本地目录]`
+5. 从远程仓库抓取和拉取：
+* 抓取指令：`git fetch [remote name] [branch name]`
+    - 抓取指令就是把更新都抓取到本地，不会进行合并分支。
+    - 如果不指定远端名称和分支名，则抓取所有分支。
+* 拉取指令：`git pull [remote name] [branch name]`
+    - 拉取指令就是将抓取并合并，等同于fetch+merge
+    - 如果不指定远端名称和分支名，则拉取所有更新并合并当前分支。
+
+### 工作流程
+```
+git remote add origin  <仓库名称>
+git clone <仓库地址> [本地目录]
+git-log
+
+# 一系列更新操作后
+
+git add .
+git commit -m '注释'
+# 第一次push
+git push --set-upstream origin master:master
+# 后续push
+git push
+
+# 之后每次push前先pull
+git pull
+
+```

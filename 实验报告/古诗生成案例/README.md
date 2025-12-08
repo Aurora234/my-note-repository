@@ -1,0 +1,1 @@
+[项目链接](D:\AppData\JetBrainsProjects\PyCharmProjects\demo_project\deep_learning\ch09_rnn\3_poems_generation.py)

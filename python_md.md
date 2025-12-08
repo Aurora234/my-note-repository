@@ -1,7 +1,9 @@
-## numpy
+# numpy
 
 ## numpy的线性代数
+
 ### 矩阵乘法(点积)
+
 ```python
 # 方法1: @ 运算符 (推荐)
 result1 = A @ B
@@ -194,12 +196,15 @@ print("打乱行后:\n", matrix)
 ```
 
 ---
-## pandas
+# pandas
+
 **两种主要数据结构**
+
 * Series：一维带标签数组
 * DataFrame：二维数据表格
 
 ### 1. Series基本用法
+
 * 创建Series
 ```python
 # 从列表创建
@@ -553,3 +558,375 @@ monthly_sales = time_series_df['销售额'].resample('M').sum()
 print("月度销售额:\n", monthly_sales)
 ```
 
+
+
+
+
+# Python 中集合、列表的用法及联合操作
+
+## 1. 集合 (Set) 的用法和操作
+
+### 创建集合
+
+python
+
+```
+# 创建空集合
+empty_set = set()
+
+# 创建有元素的集合
+my_set = {1, 2, 3, 4, 5}
+mixed_set = {1, "hello", 3.14, True}
+
+# 从列表创建集合
+list_to_set = set([1, 2, 2, 3, 4, 4, 5])  # {1, 2, 3, 4, 5}
+```
+
+
+
+### 集合基本操作
+
+python
+
+```
+my_set = {1, 2, 3, 4, 5}
+
+# 添加元素
+my_set.add(6)           # {1, 2, 3, 4, 5, 6}
+my_set.update([7, 8])   # {1, 2, 3, 4, 5, 6, 7, 8}
+
+# 删除元素
+my_set.remove(3)        # 删除元素3，如果不存在会报错
+my_set.discard(10)      # 删除元素10，如果不存在不会报错
+popped = my_set.pop()   # 随机删除并返回一个元素
+
+# 检查元素是否存在
+if 2 in my_set:
+    print("2在集合中")
+
+# 集合长度
+length = len(my_set)
+```
+
+
+
+### 集合运算
+
+python
+
+```
+set_a = {1, 2, 3, 4, 5}
+set_b = {4, 5, 6, 7, 8}
+
+# 并集
+union_set = set_a | set_b           # {1, 2, 3, 4, 5, 6, 7, 8}
+union_set = set_a.union(set_b)      # 同上
+
+# 交集
+intersection_set = set_a & set_b    # {4, 5}
+intersection_set = set_a.intersection(set_b)  # 同上
+
+# 差集
+difference_set = set_a - set_b      # {1, 2, 3}
+difference_set = set_a.difference(set_b)  # 同上
+
+# 对称差集 (只在其中一个集合中出现的元素)
+symmetric_diff = set_a ^ set_b      # {1, 2, 3, 6, 7, 8}
+symmetric_diff = set_a.symmetric_difference(set_b)  # 同上
+
+# 子集和超集检查
+set_c = {1, 2}
+print(set_c.issubset(set_a))        # True
+print(set_a.issuperset(set_c))      # True
+```
+
+
+
+## 2. 列表 (List) 的用法和操作
+
+### 创建列表
+
+python
+
+```
+# 创建空列表
+empty_list = []
+empty_list = list()
+
+# 创建有元素的列表
+my_list = [1, 2, 3, 4, 5]
+mixed_list = [1, "hello", 3.14, True, [1, 2, 3]]
+
+# 使用range创建列表
+numbers = list(range(10))           # [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+```
+
+
+
+### 列表基本操作
+
+python
+
+```
+my_list = [1, 2, 3, 4, 5]
+
+# 访问元素
+first = my_list[0]                  # 1
+last = my_list[-1]                  # 5
+sublist = my_list[1:4]              # [2, 3, 4]
+
+# 修改元素
+my_list[0] = 10                     # [10, 2, 3, 4, 5]
+
+# 添加元素
+my_list.append(6)                   # [10, 2, 3, 4, 5, 6]
+my_list.insert(1, 1.5)              # [10, 1.5, 2, 3, 4, 5, 6]
+my_list.extend([7, 8])              # [10, 1.5, 2, 3, 4, 5, 6, 7, 8]
+
+# 删除元素
+removed = my_list.pop()             # 删除并返回最后一个元素
+removed = my_list.pop(1)            # 删除并返回索引1的元素
+my_list.remove(3)                   # 删除第一个出现的3
+del my_list[0]                      # 删除索引0的元素
+
+# 查找元素
+index = my_list.index(4)            # 返回4的索引
+count = my_list.count(2)            # 返回2出现的次数
+
+# 排序
+my_list.sort()                      # 升序排序
+my_list.sort(reverse=True)          # 降序排序
+sorted_list = sorted(my_list)       # 返回新排序列表，原列表不变
+
+# 反转
+my_list.reverse()                   # 反转列表
+reversed_list = list(reversed(my_list))  # 返回新反转列表
+```
+
+
+
+### 列表推导式
+
+python
+
+```
+# 创建平方数列表
+squares = [x**2 for x in range(10)]
+
+# 带条件的列表推导式
+even_squares = [x**2 for x in range(10) if x % 2 == 0]
+
+# 嵌套列表推导式
+matrix = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
+flattened = [num for row in matrix for num in row]  # [1, 2, 3, 4, 5, 6, 7, 8, 9]
+```
+
+
+
+## 3. 列表和集合的联合操作
+
+### 相互转换
+
+python
+
+```
+# 列表转集合 (去重)
+my_list = [1, 2, 2, 3, 4, 4, 5]
+my_set = set(my_list)               # {1, 2, 3, 4, 5}
+
+# 集合转列表
+new_list = list(my_set)             # [1, 2, 3, 4, 5] (顺序可能不同)
+
+# 保持顺序的去重
+ordered_list = list(dict.fromkeys(my_list))  # [1, 2, 3, 4, 5] (保持顺序)
+```
+
+
+
+### 常用联合操作
+
+python
+
+```
+# 1. 列表去重
+duplicate_list = [1, 2, 2, 3, 4, 4, 4, 5]
+unique_list = list(set(duplicate_list))  # [1, 2, 3, 4, 5]
+
+# 2. 找出两个列表的共同元素
+list1 = [1, 2, 3, 4, 5]
+list2 = [4, 5, 6, 7, 8]
+common_elements = list(set(list1) & set(list2))  # [4, 5]
+
+# 3. 找出只在其中一个列表中的元素
+unique_to_list1 = list(set(list1) - set(list2))  # [1, 2, 3]
+unique_to_list2 = list(set(list2) - set(list1))  # [6, 7, 8]
+
+# 4. 合并列表并去重
+combined_unique = list(set(list1 + list2))  # [1, 2, 3, 4, 5, 6, 7, 8]
+
+# 5. 检查列表是否有重复元素
+def has_duplicates(lst):
+    return len(lst) != len(set(lst))
+
+print(has_duplicates([1, 2, 3, 4, 5]))     # False
+print(has_duplicates([1, 2, 3, 3, 4]))     # True
+
+# 6. 找出列表中的唯一元素（只出现一次的元素）
+from collections import Counter
+def find_unique_elements(lst):
+    counter = Counter(lst)
+    return [item for item, count in counter.items() if count == 1]
+
+print(find_unique_elements([1, 2, 2, 3, 4, 4, 5]))  # [1, 3, 5]
+```
+
+
+
+### 实际应用示例
+
+python
+
+```
+# 示例1: 处理用户标签
+user1_tags = ["python", "programming", "coding", "tech"]
+user2_tags = ["python", "data", "analysis", "tech"]
+
+# 共同兴趣
+common_interests = list(set(user1_tags) & set(user2_tags))
+print("共同兴趣:", common_interests)  # ['python', 'tech']
+
+# 所有不重复的兴趣
+all_interests = list(set(user1_tags + user2_tags))
+print("所有兴趣:", all_interests)  # ['python', 'programming', 'coding', 'tech', 'data', 'analysis']
+
+# 示例2: 数据清洗
+raw_data = ["apple", "banana", "Apple", "BANANA", "apple", "orange"]
+cleaned_data = list(set(item.lower() for item in raw_data))
+print("清洗后数据:", cleaned_data)  # ['banana', 'orange', 'apple']
+
+# 示例3: 权限管理
+user_roles = ["admin", "editor", "viewer", "editor", "admin"]
+available_roles = ["admin", "editor", "viewer", "guest"]
+
+# 验证用户角色是否有效
+user_unique_roles = set(user_roles)
+valid_roles = set(available_roles)
+invalid_roles = user_unique_roles - valid_roles
+
+if invalid_roles:
+    print(f"无效角色: {list(invalid_roles)}")
+else:
+    print("所有角色都有效")
+```
+
+
+
+### 性能考虑
+
+- **集合**：查找、添加、删除操作的平均时间复杂度为 O(1)
+- **列表**：查找操作的平均时间复杂度为 O(n)，添加/删除操作取决于位置
+
+python
+
+```
+# 当需要频繁检查元素是否存在时，使用集合更高效
+large_list = list(range(1000000))
+large_set = set(large_list)
+
+# 检查元素是否存在 - 集合更快
+%timeit 999999 in large_set    # 约 O(1)
+%timeit 999999 in large_list   # 约 O(n)
+```
+
+
+
+# 生成器generator
+
+生成器（Generator）是Python中一种特殊的迭代器，它允许你按需生成值，而不是一次性生成所有值。这样可以节省内存，并且可以表示无限序列。
+
+生成器有两种创建方式：
+
+1. 生成器表达式：类似于列表推导式，但是使用圆括号。
+2. 生成器函数：使用`yield`语句的函数。
+
+### 1. 生成器表达式
+
+生成器表达式的语法和列表推导式类似，但是使用圆括号而不是方括号。
+
+python
+
+```
+# 列表推导式
+list_comp = [x**2 for x in range(5)]  # [0, 1, 4, 9, 16]
+
+# 生成器表达式
+gen_exp = (x**2 for x in range(5))
+print(gen_exp)  # <generator object <genexpr> at 0x...>
+
+# 可以通过迭代来获取值
+for value in gen_exp:
+    print(value)
+```
+
+
+
+### 2. 生成器函数
+
+生成器函数使用`yield`语句来返回一个值，并暂停函数的执行，直到下一次请求值。当函数再次被调用时，它会从上次暂停的地方继续执行。
+
+python
+
+```
+def my_generator():
+    yield 1
+    yield 2
+    yield 3
+
+# 调用生成器函数返回一个生成器对象
+gen = my_generator()
+
+# 可以使用next()函数获取下一个值
+print(next(gen))  # 1
+print(next(gen))  # 2
+print(next(gen))  # 3
+# print(next(gen))  # 抛出StopIteration异常
+
+# 或者使用for循环迭代
+for value in my_generator():
+    print(value)
+```
+
+
+
+### 生成器的优势
+
+- **内存效率**：生成器一次只产生一个值，不会一次性将整个序列加载到内存中。这对于处理大量数据或无限序列非常有用。
+- **惰性求值**：值只有在被请求时才会生成，这允许表示无限序列。
+
+### 生成器的方法
+
+生成器对象有一些方法，如`send()`、`throw()`和`close()`，这些方法允许与生成器交互。
+
+- `send(value)`：向生成器发送一个值，该值将成为当前yield表达式的结果，并返回生成器产生的下一个值。
+- `throw(type[, value[, traceback]])`：在生成器暂停的地方抛出异常。
+- `close()`：关闭生成器。
+
+### 示例：使用send方法
+
+python
+
+```
+def generator_with_send():
+    value = yield "First yield"
+    yield value
+
+gen = generator_with_send()
+print(next(gen))        # 输出: First yield
+print(gen.send("Hello")) # 输出: Hello
+```
+
+
+
+在这个例子中，首先调用`next(gen)`启动生成器，直到第一个yield。然后使用`send("Hello")`将"Hello"发送给生成器，这个值被赋值给变量`value`，然后生成器继续执行到下一个yield，返回`value`。
+
+生成器是Python中强大且常用的特性，特别是在处理大数据流、异步编程和协程中。

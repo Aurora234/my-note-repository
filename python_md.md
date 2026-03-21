@@ -562,7 +562,7 @@ print("月度销售额:\n", monthly_sales)
 
 
 
-# Python 中集合、列表的用法及联合操作
+# list、set的用法及联合操作
 
 ## 1. 集合 (Set) 的用法和操作
 
@@ -570,7 +570,7 @@ print("月度销售额:\n", monthly_sales)
 
 python
 
-```
+```python
 # 创建空集合
 empty_set = set()
 
@@ -588,7 +588,7 @@ list_to_set = set([1, 2, 2, 3, 4, 4, 5])  # {1, 2, 3, 4, 5}
 
 python
 
-```
+```python
 my_set = {1, 2, 3, 4, 5}
 
 # 添加元素
@@ -614,7 +614,7 @@ length = len(my_set)
 
 python
 
-```
+```python
 set_a = {1, 2, 3, 4, 5}
 set_b = {4, 5, 6, 7, 8}
 
@@ -648,7 +648,7 @@ print(set_a.issuperset(set_c))      # True
 
 python
 
-```
+```python
 # 创建空列表
 empty_list = []
 empty_list = list()
@@ -667,7 +667,7 @@ numbers = list(range(10))           # [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
 
 python
 
-```
+```python
 my_list = [1, 2, 3, 4, 5]
 
 # 访问元素
@@ -709,7 +709,7 @@ reversed_list = list(reversed(my_list))  # 返回新反转列表
 
 python
 
-```
+```python
 # 创建平方数列表
 squares = [x**2 for x in range(10)]
 
@@ -729,7 +729,7 @@ flattened = [num for row in matrix for num in row]  # [1, 2, 3, 4, 5, 6, 7, 8, 9
 
 python
 
-```
+```python
 # 列表转集合 (去重)
 my_list = [1, 2, 2, 3, 4, 4, 5]
 my_set = set(my_list)               # {1, 2, 3, 4, 5}
@@ -747,7 +747,7 @@ ordered_list = list(dict.fromkeys(my_list))  # [1, 2, 3, 4, 5] (保持顺序)
 
 python
 
-```
+```python
 # 1. 列表去重
 duplicate_list = [1, 2, 2, 3, 4, 4, 4, 5]
 unique_list = list(set(duplicate_list))  # [1, 2, 3, 4, 5]
@@ -786,7 +786,7 @@ print(find_unique_elements([1, 2, 2, 3, 4, 4, 5]))  # [1, 3, 5]
 
 python
 
-```
+```python
 # 示例1: 处理用户标签
 user1_tags = ["python", "programming", "coding", "tech"]
 user2_tags = ["python", "data", "analysis", "tech"]
@@ -828,7 +828,7 @@ else:
 
 python
 
-```
+```python
 # 当需要频繁检查元素是否存在时，使用集合更高效
 large_list = list(range(1000000))
 large_set = set(large_list)
@@ -855,7 +855,7 @@ large_set = set(large_list)
 
 python
 
-```
+```python
 # 列表推导式
 list_comp = [x**2 for x in range(5)]  # [0, 1, 4, 9, 16]
 
@@ -876,7 +876,7 @@ for value in gen_exp:
 
 python
 
-```
+```python
 def my_generator():
     yield 1
     yield 2
@@ -915,7 +915,7 @@ for value in my_generator():
 
 python
 
-```
+```python
 def generator_with_send():
     value = yield "First yield"
     yield value
@@ -930,3 +930,662 @@ print(gen.send("Hello")) # 输出: Hello
 在这个例子中，首先调用`next(gen)`启动生成器，直到第一个yield。然后使用`send("Hello")`将"Hello"发送给生成器，这个值被赋值给变量`value`，然后生成器继续执行到下一个yield，返回`value`。
 
 生成器是Python中强大且常用的特性，特别是在处理大数据流、异步编程和协程中。
+
+
+
+# 内置函数
+
+## map
+
+`map()` 是一个内置函数，用于对一个或多个可迭代对象（如列表、元组等）中的每个元素应用一个指定的函数，并返回一个 **map 对象**（一种惰性求值的迭代器）。
+
+### 基本语法：
+
+```python
+map(function, iterable, ...)
+```
+
+- `function`：要应用于每个元素的函数。
+- `iterable`：一个或多个可迭代对象（如 list、tuple 等）。
+- 如果传入多个可迭代对象，`function` 必须能接受相应数量的参数。
+
+---
+
+### 示例 1：单个可迭代对象
+
+将列表中每个数字平方：
+
+```python
+numbers = [1, 2, 3, 4]
+squared = map(lambda x: x ** 2, numbers)
+print(list(squared))  # 输出: [1, 4, 9, 16]
+```
+
+> 注意：`map()` 返回的是一个 **迭代器**，所以通常需要用 `list()` 转换为列表才能看到全部结果。
+
+---
+
+### 示例 2：多个可迭代对象
+
+对两个列表对应位置的元素求和：
+
+```python
+a = [1, 2, 3]
+b = [10, 20, 30]
+result = map(lambda x, y: x + y, a, b)
+print(list(result))  # 输出: [11, 22, 33]
+```
+
+> 两个列表长度不同时，`map()` 会在最短的那个结束时停止（类似于 `zip` 的行为）。
+
+---
+
+### 示例 3：使用普通函数代替 lambda
+
+```python
+def to_upper(s):
+    return s.upper()
+
+words = ['hello', 'world']
+upper_words = map(to_upper, words)
+print(list(upper_words))  # 输出: ['HELLO', 'WORLD']
+```
+
+---
+
+### 特点与注意事项：
+
+- **惰性求值**：`map()` 不会立即计算所有结果，而是在你遍历（如用 `for` 循环或转成 `list`）时才逐个生成。这节省内存。
+- **一次消费**：map 对象只能被遍历一次。再次遍历时为空。
+- **性能**：对于简单操作，`map()` 通常比显式 `for` 循环快（尤其配合内置函数时），但可读性有时不如列表推导式。
+- **替代写法**：很多情况下可以用 **列表推导式** 替代，例如：
+  ```python
+  [x**2 for x in numbers]  # 等价于 map(lambda x: x**2, numbers)
+  ```
+
+---
+
+### 总结
+
+`map()` 是函数式编程风格的工具，适合“对每个元素做相同操作”的场景。合理使用可以让代码更简洁高效。
+
+---
+
+
+
+## filter
+
+在 Python 中，`filter()` 是一个内置函数，用于**过滤可迭代对象中的元素**。它根据一个函数的返回值（布尔类型）来决定保留或丢弃元素：
+
+- 如果函数返回 `True`，则保留该元素；
+- 如果返回 `False`，则丢弃该元素。
+
+---
+
+### 基本语法
+
+```python
+filter(function, iterable)
+```
+
+- `function`：一个接受单个参数并返回布尔值的函数（`True` 或 `False`）。
+- `iterable`：一个可迭代对象（如列表、元组、字符串等）。
+- 返回一个 **filter 对象**（惰性求值的迭代器）。
+
+---
+
+### 示例 1：使用 lambda 过滤奇数
+
+```python
+numbers = [1, 2, 3, 4, 5, 6]
+odds = filter(lambda x: x % 2 == 1, numbers)
+print(list(odds))  # 输出: [1, 3, 5]
+```
+
+> 只保留满足 `x % 2 == 1`（即奇数）的元素。
+
+---
+
+### 示例 2：使用普通函数过滤字符串长度
+
+```python
+words = ['cat', 'elephant', 'dog', 'hippopotamus']
+long_words = filter(lambda w: len(w) > 3, words)
+print(list(long_words))  # 输出: ['elephant', 'hippopotamus']
+```
+
+---
+
+### 示例 3：过滤非空字符串
+
+```python
+items = ['hello', '', 'world', '', 'python']
+non_empty = filter(lambda x: x != '', items)
+print(list(non_empty))  # ['hello', 'world', 'python']
+```
+
+> 空字符串在布尔上下文中为 `False`，所以也可以写成：
+
+```python
+non_empty = filter(None, items)  # 相当于 filter(bool, items)
+```
+
+---
+
+### 示例 4：过滤 None 值
+
+```python
+data = [1, None, 3, None, 5]
+cleaned = filter(None, data)  # 过滤掉 false 值（包括 None、0、''、[] 等）
+print(list(cleaned))  # [1, 3, 5]
+```
+
+> 当 `function` 为 `None` 时，`filter()` 会保留所有“真值”元素（相当于 `bool(item)` 为 `True`）。
+
+---
+
+### 特点与注意事项
+
+- **惰性求值**：和 `map()`、`zip()` 一样，`filter()` 返回迭代器，节省内存。
+- **一次消费**：filter 对象只能遍历一次。
+- **性能**：对于简单过滤逻辑，`filter()` 比 `for` 循环更快，但**列表推导式**通常更具可读性：
+
+  ```python
+  # 等价写法
+  odds = [x for x in numbers if x % 2 == 1]  # 列表推导式
+  odds = list(filter(lambda x: x % 2 == 1, numbers))  # filter
+  ```
+
+---
+
+### 常见用途总结
+
+| 场景                 | 示例                                                   |
+| -------------------- | ------------------------------------------------------ |
+| 过滤满足条件的元素   | `filter(lambda x: x > 0, numbers)`                     |
+| 移除空值或 None      | `filter(None, data)`                                   |
+| 数据清洗             | `filter(lambda item: item.startswith('valid'), items)` |
+| 与自定义判断函数结合 | `filter(is_valid, data)`                               |
+
+---
+
+### 与其他函数对比
+
+| 函数       | 功能                           | 示例                            |
+| ---------- | ------------------------------ | ------------------------------- |
+| `map()`    | 对每个元素执行函数             | `map(str.upper, words)`         |
+| `filter()` | 保留满足条件的元素             | `filter(lambda x: x > 0, nums)` |
+| `reduce()` | 累积计算（需导入 `functools`） | `reduce(operator.add, nums)`    |
+| 列表推导式 | 更 Pythonic 的替代方案         | `[x for x in nums if x > 0]`    |
+
+---
+
+### 总结
+
+- `filter()` 适合“**筛选符合条件的元素**”的场景。
+- 通常配合 `lambda` 或自定义函数使用。
+- 与列表推导式相比，`filter()` 在处理大型数据集时更省内存，但可读性略低。
+- 记住：返回的是迭代器，需用 `list()` 或循环来查看结果。
+
+---
+
+
+
+## zip
+
+`zip()` 是一个内置函数，用于**将多个可迭代对象（如列表、元组等）“打包”成一个由元组组成的迭代器**。它会按位置将每个可迭代对象的元素组合在一起，直到最短的那个可迭代对象耗尽为止。
+
+**基本语法**
+
+```python
+zip(iterable1, iterable2, ..., iterableN)
+```
+
+- 接受任意数量的可迭代对象。
+- 返回一个 **zip 对象**（惰性求值的迭代器）。
+- 每次从每个可迭代对象中取一个元素，组成一个元组。
+
+**示例 1：基本用法**
+
+```python
+names = ['Alice', 'Bob', 'Charlie']
+ages = [25, 30, 35]
+
+zipped = zip(names, ages)
+print(list(zipped))
+# 输出: [('Alice', 25), ('Bob', 30), ('Charlie', 35)]
+```
+
+------
+
+ **示例 2：多个可迭代对象**
+
+```python
+a = [1, 2, 3]
+b = ['x', 'y', 'z']
+c = [10.0, 20.0, 30.0]
+
+result = zip(a, b, c)
+print(list(result))
+# 输出: [(1, 'x', 10.0), (2, 'y', 20.0), (3, 'z', 30.0)]
+```
+
+------
+
+ **示例 3：长度不一致时（以最短为准**）
+
+```python
+list1 = [1, 2, 3, 4]
+list2 = ['a', 'b']
+
+print(list(zip(list1, list2)))
+# 输出: [(1, 'a'), (2, 'b')]
+# 注意：4 和 3 被忽略，因为 list2 只有两个元素
+```
+
+> 如果你希望以最长的为准，并用填充值补齐，可以使用 `itertools.zip_longest()`。
+
+ **示例 4：解压（“反 zip”）**
+
+`zip()` 的逆操作可以用 `*` 解包实现：
+
+```python
+pairs = [('Alice', 25), ('Bob', 30), ('Charlie', 35)]
+
+names, ages = zip(*pairs)
+print(names)  # ('Alice', 'Bob', 'Charlie')
+print(ages)   # (25, 30, 35)
+```
+
+这在数据处理中非常实用！
+
+------
+
+ **特点与注意事项**
+
+- **惰性求值**：`zip()` 返回的是迭代器，不会立即生成所有结果，节省内存。
+
+- **只能遍历一次**：和 `map()`、`filter()` 一样，zip 对象消费一次后就为空。
+
+- **适用于并行遍历**：
+
+  ```python
+  for name, age in zip(names, ages):
+      print(f"{name} is {age} years old")
+  ```
+
+ **常见用途**
+
+| 场景                 | 说明                                  |
+| -------------------- | ------------------------------------- |
+| 并行遍历多个列表     | 避免用索引 `for i in range(len(...))` |
+| 构造字典             | `dict(zip(keys, values))`             |
+| 数据对齐             | 将来自不同来源但顺序对应的数据组合    |
+| 矩阵转置（简单情况） | `list(zip(*matrix))`                  |
+
+ **示例：构造字典**
+
+```python
+keys = ['name', 'age', 'city']
+values = ['Alice', 25, 'New York']
+person = dict(zip(keys, values))
+print(person)
+# {'name': 'Alice', 'age': 25, 'city': 'New York'}
+```
+
+ **示例：矩阵转置**
+
+```python
+matrix = [
+    [1, 2, 3],
+    [4, 5, 6]
+]
+transposed = list(zip(*matrix))
+print(transposed)
+# [(1, 4), (2, 5), (3, 6)]
+```
+
+
+
+---
+
+
+
+
+
+## lambda表达式
+
+`lambda` 表达式是 Python 中用于创建**匿名函数**（即没有名字的函数）的一种简洁语法。它通常用于需要一个简单函数但又不想正式用 `def` 定义函数的场合，尤其常与 `map()`、`filter()`、`sorted()`、`reduce()` 等高阶函数配合使用。
+
+------
+
+### 基本语法
+
+```python
+lambda 参数: 表达式
+```
+
+- **参数**：可以有零个或多个（用逗号分隔）。
+- **表达式**：只能是一个**单行表达式**（不能是语句，如 `print`、`return`、`if` 块等）。
+- 整个 `lambda` 表达式会**自动返回表达式的计算结果**。
+
+------
+
+### 示例 1：最简单的 lambda
+
+```python
+# 定义一个加法匿名函数
+add = lambda x, y: x + y
+print(add(3, 5))  # 输出: 8
+```
+
+这等价于：
+
+```python
+def add(x, y):
+    return x + y
+```
+
+------
+
+### 示例 2：与 `map()` 配合使用
+
+将列表中每个数平方：
+
+```python
+numbers = [1, 2, 3, 4]
+squared = list(map(lambda x: x ** 2, numbers))
+print(squared)  # [1, 4, 9, 16]
+```
+
+------
+
+### 示例 3：与 `filter()` 配合使用
+
+筛选出偶数：
+
+```python
+nums = [1, 2, 3, 4, 5, 6]
+evens = list(filter(lambda x: x % 2 == 0, nums))
+print(evens)  # [2, 4, 6]
+```
+
+------
+
+### 示例 4：与 `sorted()` 配合使用（自定义排序）
+
+按元组第二个元素排序：
+
+```python
+pairs = [('apple', 3), ('banana', 1), ('cherry', 2)]
+sorted_pairs = sorted(pairs, key=lambda x: x[1])
+print(sorted_pairs)  # [('banana', 1), ('cherry', 2), ('apple', 3)]
+```
+
+------
+
+### 注意事项
+
+1. **只能包含表达式，不能包含语句**
+    ❌ 错误示例：
+
+   ```python
+   f = lambda x: print(x)  # 虽然能运行，但不推荐（print 是语句，但在 Python 中是函数）
+   f = lambda x: if x > 0: return x  # 语法错误！不能用 if/else 语句块
+   ```
+
+   ✅ 正确写法（使用条件表达式）：
+
+   ```python
+   f = lambda x: x if x > 0 else -x
+   ```
+
+2. **可读性优先**
+    如果逻辑复杂（比如多行、嵌套条件），建议使用普通 `def` 函数，而不是强行塞进 `lambda`。
+
+3. **lambda 不是必须的**
+    很多时候可以用**列表推导式**或命名函数替代，代码更清晰。
+
+---
+
+
+
+
+
+
+
+## *解包
+
+在 Python 中，`*`（星号）被称为**解包操作符**（unpacking operator），它可以将**可迭代对象**（如列表、元组、字符串等）“展开”成独立的元素。它常用于函数调用、变量赋值、合并序列等多种场景。
+
+---
+
+### 一、在函数调用中解包参数
+
+最常见的用途是将一个序列（如列表或元组）作为**多个独立参数**传递给函数。
+
+ **示例 1：传递多个参数**
+
+```python
+def greet(name, age, city):
+    print(f"Hello {name}, you are {age} years old and live in {city}")
+
+info = ["Alice", 25, "Paris"]
+greet(*info)  # 等价于 greet("Alice", 25, "Paris")
+```
+
+> `*info` 将列表 `["Alice", 25, "Paris"]` 展开为三个独立参数。
+
+ **示例 2：与 zip 结合（前面提到过）**
+
+```python
+pairs = [('Alice', 25), ('Bob', 30)]
+names, ages = zip(*pairs)  # 解包 pairs
+print(names)  # ('Alice', 'Bob')
+print(ages)   # (25, 30)
+```
+
+---
+
+### 二、在变量赋值中解包
+
+可以用来快速分离序列中的元素。
+
+ **示例 3：解包首尾元素**
+
+```python
+numbers = [1, 2, 3, 4, 5]
+first, *middle, last = numbers
+print(first)   # 1
+print(middle)  # [2, 3, 4]
+print(last)    # 5
+```
+
+> `*middle` 收集中间的所有元素（即使为空）。
+
+ **示例 4：交换变量（常见技巧）**
+
+```python
+a, b = 10, 20
+a, b = b, a  # 等价于 a, b = *(20, 10)
+print(a, b)  # 20 10
+```
+
+---
+
+### 三、合并序列
+
+`*` 可以用来合并列表、元组等。
+
+ **示例 5：合并列表**
+
+```python
+list1 = [1, 2, 3]
+list2 = [4, 5, 6]
+merged = [*list1, *list2]
+print(merged)  # [1, 2, 3, 4, 5, 6]
+```
+
+ **示例 6：合并字符串（转换为字符列表）**
+
+```python
+chars = [*"abc", *"xyz"]
+print(chars)  # ['a', 'b', 'c', 'x', 'y', 'z']
+```
+
+---
+
+### 四、在函数定义中收集参数（`*args`）
+
+`*` 也可用于函数定义中，将多余的参数收集为元组。
+
+```python
+def my_sum(*args):
+    return sum(args)
+
+print(my_sum(1, 2, 3, 4))  # 10
+```
+
+> `args` 是一个元组：`(1, 2, 3, 4)`
+
+---
+
+### 五、`**` 解包字典（扩展知识）
+
+还有一个类似的 `**` 操作符，用于解包字典键值对作为关键字参数：
+
+```python
+def introduce(name, age):
+    print(f"I'm {name}, {age} years old")
+
+person = {"name": "Alice", "age": 25}
+introduce(**person)  # 等价于 introduce(name="Alice", age=25)
+```
+
+> `**person` 将字典解包为 `name="Alice", age=25`。
+
+---
+
+### 注意事项
+
+1. **只能解包可迭代对象**：`*5` 会报错，因为整数不可迭代。
+2. **解包顺序**：解包时按顺序展开，例如 `func(1, *list, 2)` 会先传 `1`，然后是 `list` 中的每个元素，最后是 `2`。
+3. **与 `zip`、`map` 等结合**：常见用法，如 `zip(*matrix)` 实现矩阵转置。
+
+---
+
+### 常见用途总结
+
+| 场景                 | 示例                   |
+| -------------------- | ---------------------- |
+| 函数调用时展开参数   | `func(*args)`          |
+| 合并序列             | `[*list1, *list2]`     |
+| 分离首尾元素         | `first, *rest = seq`   |
+| 矩阵转置             | `zip(*matrix)`         |
+| 收集多余参数         | `def func(*args): ...` |
+| 解包字典为关键字参数 | `func(**kwargs)`       |
+
+---
+
+### 总结
+
+- `*` 解包操作符让 Python 代码更灵活、简洁。
+- 它是实现“动态参数传递”和“序列操作”的强大工具。
+- 记住：`*` 用于序列（列表、元组），`**` 用于字典。
+
+
+
+# 高级概念
+
+
+
+## 1.闭包
+
+**闭包（Closure）** 是 Python（以及许多其他编程语言）中一个非常重要的概念，它指的是：
+
+> **一个内部函数“记住”并能够访问其外部作用域中的变量，即使外部函数已经执行完毕。**
+
+**1. 示例：**
+
+```python
+def outer(x):
+    def inner(y):
+        return x + y      # inner 使用了外部函数 outer 的变量 x
+    return inner          # 返回 inner 函数本身（不是调用）
+
+# 创建闭包
+add_10 = outer(10)   # outer 执行完毕，x=10 已“消失”
+print(add_10(5))     # 输出 15！inner 仍然能访问 x=10
+```
+
+这里：
+
+- `inner` 是一个**内部函数**
+- 它引用了**非局部变量 `x`**（来自 `outer`）
+- 即使 `outer` 已经返回，`inner` 依然“绑定了” `x=10`
+- 这个组合（`inner` 函数 + 被捕获的变量 `x`）就叫 **闭包**
+
+
+
+**2.闭包的必要条件：**
+
+- **存在嵌套函数**（函数 inside 函数）
+- **内部函数引用了外部函数的变量**（自由变量）
+- **外部函数返回了内部函数**（或以某种方式让内部函数在外部被调用）
+
+
+
+**3.查看闭包内容：**
+
+你可以通过 `__closure__` 属性查看闭包捕获的变量：
+
+```python
+print(add_10.__closure__)        # (<cell at 0x...>,)
+print(add_10.__closure__[0].cell_contents)  # 10
+```
+
+
+
+**4. lambda与闭包**:
+
+✅ lambda作为闭包：
+
+```python
+def make_adder(x):
+    return lambda y: x + y   # lambda 捕获了 x
+
+add_5 = make_adder(5)
+print(add_5(3))  # 输出 8
+```
+
+这里：
+
+- `lambda y: x + y` 是一个匿名函数
+- 它引用了外层 `make_adder` 的参数 `x`
+- 即使 `make_adder` 返回后，`x=5` 仍被保留
+- **这就是一个由 `lambda` 构成的闭包！**
+
+❌ 错误示例：
+```python
+funcs = []
+for i in range(3):
+    funcs.append(lambda: i)   # 所有 lambda 共享同一个 i
+
+for f in funcs:
+    print(f())  # 输出：2, 2, 2 （不是 0,1,2！）
+```
+
+**原因**：
+ 所有 `lambda` 都引用了**同一个变量 `i`**，而 `i` 在循环结束后值为 `2`。
+ 这不是“每个 lambda 记住当时的 i”，而是“都指向同一个 i”。
+
+✅ 正确做法：用默认参数“固化”当前值:
+```python
+funcs = []
+for i in range(3):
+    funcs.append(lambda x=i: x)   # 利用默认参数捕获当前 i
+
+for f in funcs:
+    print(f())  # 输出：0, 1, 2 ✅
+```
+

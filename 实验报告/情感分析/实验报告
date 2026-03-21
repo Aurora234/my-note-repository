@@ -1,0 +1,56 @@
+# Bert情感分析任务
+
+利用预训练的Bert模型进行训练，输入评论，输出对该评论的情感分析结果。
+
+
+
+## 实验环境
+
+- IDE
+  pycharm2024
+
+- package
+  torch=2.9.1
+  nltk
+
+- cpu：13th_Core_i9
+
+  gpu: RTX4060 Laptop
+
+  videoMemory：8G
+
+  RAM：32G
+
+- OS：Win11
+
+  cuda:12.9
+
+## 数据集
+
+![image-20260123163205420](C:\Users\aurora\Desktop\研究生\系统结构\笔记\图床\image-20260123163205420.png)
+
+数据集与模型来自hugging-face
+
+[hugging-face]([Datasets – Hugging Face](https://hf-mirror.com/datasets))
+
+## 项目结构
+
+![image-20260123163352768](C:\Users\aurora\Desktop\研究生\系统结构\笔记\图床\image-20260123163352768.png)
+
+- data：保存原始数据（raw）。以及预处理后的训练集和测试集（processed），以jsonl形式保存。
+- logs：TensorBoard日志
+- models：
+  - best.pt：模型参数
+  - vocab：中文词表
+- src：源代码
+  - config：超参数以及文件路径
+  - dataset：构建dataset与dataloader
+  - evaluate：模型评估
+  - model：模型
+  - predict：模型推理
+  - process：数据预处理
+  - tokenizer：分词器，本项目直接使用bert配套的分词器
+  - train：模型训练
+
+项目启动顺序：process-->train-->predict / evaluate
+

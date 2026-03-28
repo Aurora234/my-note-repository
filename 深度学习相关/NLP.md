@@ -2297,6 +2297,8 @@ NER：Named Entity Recognition，命名实体识别
 
 ### 解码器编码器模型-T5
 
+注：该模型不值得学习，了解即可，主要重点学习解码器模型
+
 T5的核心思想是将所有自然语言处理任务统一表示为“文本到文本”的转换问题（Text-to-Text Framework），即无论输入是文本分类、问答还是翻译，模型的输入输出均是自然语言形式的字符串，如下图所示：
 
 ![image-20260225184058422](C:\Users\aurora\Desktop\研究生\研究生任务\笔记\picture_bed\image-20260225184058422.png)
@@ -2334,10 +2336,6 @@ T5微调阶段需要将所有任务转换为文本到文本的形式，例如：
 | **问答**     | question: What is the capital of France? context: France is a country... | Paris        |
 
 
-
-# Hugging Face
-
-[HF镜像站](https://hf-mirror.com)
 
 
 

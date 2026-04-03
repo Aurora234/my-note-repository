@@ -6,6 +6,30 @@
 
 在环境安装transformers模块
 
+## 准备
+
+- **GPU 显存**：推荐至少 8GB 显存（如 RTX 4060/3060 Ti），可流畅运行 3B/7B 量化模型；若仅用 CPU，需 32GB 以上内存，但推理速度会显著下降。
+- **系统内存**：建议 16GB 起步，32GB 更佳，用于加载模型权重、缓存和运行推理框架。
+- **Python 版本**：需安装 Python 3.8 或更高版本（推荐 3.10/3.11），避免版本不兼容导致库安装失败。
+
+- 设置环境变量，使用国内镜像站
+
+  > - *Linux*
+  >   export HF_ENDPOINT=https://hf-mirror.com
+  >
+  > - *Windows Powershell*:
+  >   $env:HF_ENDPOINT = "https://hf-mirror.com"
+  >   建议将上面这一行写入 `~/.bashrc`。
+
+- 安装包
+  ```bash
+  pip3 install torch torchvision --index-url https://download.pytorch.org/whl/cu126
+  
+  pip install transformers accelerate bitsandbytes
+  ```
+
+  
+
 
 
 ## 注意事项
@@ -58,6 +82,22 @@
 
 
 
+工具链（Libraries）
+
+Hugging Face 提供了一套围绕预训练模型构建的工具库。这些组件彼此独立，又可以协同工作，覆盖了从数据处理到模型训练与推理的完整流程。
+
+Ø **Datasets**
+
+Datasets 是用于加载和处理数据集的工具库。支持从在线仓库或本地文件（如 CSV、JSON）加载文本数据，并支持清洗、编码、切分等预处理操作。处理后的数据可直接用于模型训练，是连接原始数据与模型输入的重要桥梁。
+
+Ø **Tokenizers**
+
+Tokenizers 是用于将文本转换为模型输入的工具。它支持文本分词、编码为 token ID，同时自动处理特殊符号、填充（padding）、attention mask 和句子对标记（token type ID）。分词器通常与模型配套使用，可通过统一接口加载。
+
+Ø **Transformers**
+
+Transformers 是 Hugging Face 最核心的库，用于加载、使用和微调各种预训练模型。该库统一了模型接口，支持数百种模型结构，如 BERT、GPT 等，用户可以通过一行代码 from_pretrained()直接加载公开模型，快速用于推理或训练。
+
 
 
 
@@ -103,22 +143,6 @@ help(model)
 ```
 
 
-
-工具链（Libraries）
-
-Hugging Face 提供了一套围绕预训练模型构建的工具库。这些组件彼此独立，又可以协同工作，覆盖了从数据处理到模型训练与推理的完整流程。
-
-Ø **Datasets**
-
-Datasets 是用于加载和处理数据集的工具库。支持从在线仓库或本地文件（如 CSV、JSON）加载文本数据，并支持清洗、编码、切分等预处理操作。处理后的数据可直接用于模型训练，是连接原始数据与模型输入的重要桥梁。
-
-Ø **Tokenizers**
-
-Tokenizers 是用于将文本转换为模型输入的工具。它支持文本分词、编码为 token ID，同时自动处理特殊符号、填充（padding）、attention mask 和句子对标记（token type ID）。分词器通常与模型配套使用，可通过统一接口加载。
-
-Ø **Transformers**
-
-Transformers 是 Hugging Face 最核心的库，用于加载、使用和微调各种预训练模型。该库统一了模型接口，支持数百种模型结构，如 BERT、GPT 等，用户可以通过一行代码 from_pretrained()直接加载公开模型，快速用于推理或训练。
 
 
 

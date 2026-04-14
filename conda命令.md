@@ -7,14 +7,20 @@
 **清华源**
 
 ```bash
+# 删除配置的镜像
+conda config --remove-key channels
+
 # 查看当前配置
 conda config --show
 
-# 添加清华镜像源（推荐）
-conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/main
-conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/r
-conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/msys2
-conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud/conda-forge
+# 添加主仓库
+conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/main/
+# 添加免费仓库
+conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/free/
+# 添加社区仓库 (替代旧的 cloud/conda-forge)
+conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud/conda-forge/
+# (可选) 如果你需要 R 语言包
+conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/r/
 
 # 设置搜索时显示通道地址
 conda config --set show_channel_urls yes

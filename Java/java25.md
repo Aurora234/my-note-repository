@@ -6,7 +6,7 @@ Java 的运行机制是其“一次编写，到处运行”（Write Once, Run An
 
 **整体流程概览**
 
-```
+```bash
 .java 源代码 
     ↓ （编译）
 .class 字节码文件 

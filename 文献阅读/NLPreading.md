@@ -26,24 +26,6 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 # Embeddings from Language Models（ELMo）
 
 ## 论文要点
@@ -2950,6 +2932,113 @@ PPO-ptx 的目标函数可以看作一个组合任务，由两个主要部分构
     *   使用这个混合后的梯度 `∇L_total` 来更新 Actor 模型的参数。
 
 所以，“混合梯度”并不是什么特殊的操作，而是通过**在损失函数层面进行加权求和**，让反向传播自动计算出一个兼顾两个任务的综合梯度。
+
+
+
+
+
+
+
+
+
+# KV-Cache
+
+这并不是论文，而是在大模型发展过程中衍生出的推理优化技术
+
+
+
+KV-Cache（键-值缓存）是一种用于加速大型语言模型（LLM）推理过程的关键优化技术。它的核心思想是“以内存换算力”，通过缓存已计算过的中间结果来避免大量的重复计算，从而显著提升模型的响应速度。
+
+
+
+## **问题背景**
+
+要理解 KV-Cache 的价值，首先要了解大模型生成文本的方式。
+
+大型语言模型（如 GPT 系列）采用“自回归”的方式生成内容，即一个字一个字（或一个 token 一个 token）地预测和生成。在生成每一个新 token 时，模型都需要通过其核心的“自注意力机制”来理解当前 token 与之前所有 token 的关系。
+
+- **没有 KV-Cache 的情况**：假设模型正在生成第100个词。为了计算它，模型需要重新计算从第1个词到第99个词的所有中间信息（即 Key 和 Value 向量），然后再计算第100个词的信息。这个过程充满了大量的冗余计算，随着生成文本越来越长，计算量会呈平方级（O(N²)）增长，导致速度极慢。
+- **使用 KV-Cache 的情况**：模型在生成第1个词后，就将其计算出的 Key 和 Value 向量缓存起来。当生成第2个词时，它只需要计算第2个词的新向量，然后直接读取缓存中第1个词的向量即可。以此类推，生成第100个词时，模型只需计算第100个词的新向量，并复用之前所有99个词的缓存结果。
+
+通过这种方式，KV-Cache 将推理的计算复杂度从 O(N²) 降低到了 O(N)，带来了数十倍的推理加速。例如，在序列长度为2048时，推理加速比可达32.6倍。
+
+**没有使用KV-Cache的情况下**：
+
+```python
+import torch
+from transformers import GPT2LMHeadModel, GPT2Tokenizer
+
+def main():
+    # 加载模型和 tokenizer
+    model = GPT2LMHeadModel.from_pretrained("gpt2").eval()
+    tokenizer = GPT2Tokenizer.from_pretrained("gpt2")
+
+    # 初始输入
+    in_text = "Open AI is a"
+    in_tokens = torch.tensor(tokenizer.encode(in_text)).unsqueeze(0)  # [1, seq_len]
+    token_eos = torch.tensor([198])  # line break symbol
+    out_token = None
+    i = 0
+
+    with torch.no_grad():
+        while out_token != token_eos:
+            outputs = model(in_tokens)
+            logits = outputs.logits
+            out_token = torch.argmax(logits[0, -1, :], dim=-1, keepdim=True).unsqueeze(0)  # [1, 1]
+            in_tokens = torch.cat((in_tokens, out_token), dim=1)
+            text = tokenizer.decode(in_tokens[0])
+            print(f'step {i} input: {text}', flush=True)
+            i += 1
+
+    out_text = tokenizer.decode(in_tokens[0])
+    print(f'\nInput: {in_text}')
+    print(f'Output: {out_text}')
+
+if __name__ == "__main__":
+    main()
+```
+
+输出
+
+```python
+step 0 input: Open AI is a new
+step 1 input: Open AI is a new way
+step 2 input: Open AI is a new way to
+step 3 input: Open AI is a new way to build
+step 4 input: Open AI is a new way to build AI
+step 5 input: Open AI is a new way to build AI that
+step 6 input: Open AI is a new way to build AI that is
+step 7 input: Open AI is a new way to build AI that is more
+step 8 input: Open AI is a new way to build AI that is more efficient
+step 9 input: Open AI is a new way to build AI that is more efficient and
+step 10 input: Open AI is a new way to build AI that is more efficient and more
+step 11 input: Open AI is a new way to build AI that is more efficient and more efficient
+step 12 input: Open AI is a new way to build AI that is more efficient and more efficient than
+step 13 input: Open AI is a new way to build AI that is more efficient and more efficient than traditional
+step 14 input: Open AI is a new way to build AI that is more efficient and more efficient than traditional AI
+step 15 input: Open AI is a new way to build AI that is more efficient and more efficient than traditional AI.
+step 16 input: Open AI is a new way to build AI that is more efficient and more efficient than traditional AI.
+
+
+Input: Open AI is a
+Output: Open AI is a new way to build AI that is more efficient and more efficient than traditional AI.
+```
+
+在上面的推理过程中，每 step 内，输入一个 token序列，经过Embedding层将输入token序列变为一个三维张量 [b, s, h]，经过一通计算，最后经 logits 层将计算结果映射至词表空间，输出张量维度为 [b, s, vocab_size]。
+
+当前轮输出token与输入tokens拼接，并作为下一轮的输入tokens，反复多次。可以看出第 i+1 轮输入数据只比第 i 轮输入数据新增了一个 token，其他全部相同！
+
+因此第 i+1 轮推理时必然包含了第 i 轮的部分计算。KV Cache 的出发点就在这里，缓存当前轮可重复利用的计算结果，下一轮计算时直接读取缓存结果。
+
+**以下是没有KV-Cache的推理流程图**
+
+![1-5WJ9PDky](./assets/1-5WJ9PDky.png)
+
+这种方式的问题是: **每生成一个 token，就要重新计算所有之前 token 的 Q/K/V + Attention + FFN** 。
+
+## 使用KV-Cache
+
+![2-ZVPP3iYy](./assets/2-ZVPP3iYy.png)
 
 
 

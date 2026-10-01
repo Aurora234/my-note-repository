@@ -1,6 +1,10 @@
-# 设置镜像
+# conda
 
-## conda镜像设置
+
+
+## 设置镜像
+
+### conda镜像设置
 
 **查看conda环境配置**：`conda config --show`
 
@@ -57,7 +61,7 @@ conda config --remove-key channels
 
 
 
-## pip镜像配置
+### pip镜像配置
 
 **使用临时镜像**
 
@@ -138,14 +142,14 @@ pip config list
 
 
 
-# 常用命令
+## 常用命令
 
 - 查看conda版本：`conda --version`
 - 更新conda：`conda update conda`
 - 更新Anaconda整体：`conda update Anaconda`
 - 查看某个命令的帮助：`conda create --help`
 
-## 1 管理环境
+### 1 管理环境
 
 #### **创建虚拟环境：**
 
@@ -209,7 +213,7 @@ conda env export --name myenv > myenv.yml
 conda env create -f  myenv.yml
 ```
 
-## 2 包管理
+### 2 包管理
 
 #### 查询包的安装情况
 
@@ -238,6 +242,12 @@ conda list pkgname*
 conda install pkg_name -c conda_forge
 ```
 
+**从requirements.txt安装**
+
+```bash
+pip install -r requirements.txt
+```
+
 #### conda卸载包
 
 ```bash
@@ -264,7 +274,7 @@ conda clean -y -all # 删除所有的安装包及cache(索引缓存、锁定文�
 
 conda就像个守财奴一样，把每个历史安装包都会好好保存。。。好处是可以很方便地恢复到旧的历史版本，坏处是占内存空间。。。
 
-## 3 Python版本的管理
+### 3 Python版本的管理
 
 #### 将版本变更到指定版本
 
@@ -279,9 +289,9 @@ python --version
 conda update python
 ```
 
-## conda install vs pip install
+### conda install vs pip install
 
-### 有什么区别？
+#### 有什么区别？
 
 1. conda可以管理非python包，pip只能管理python包。
 2. conda自己可以用来创建环境，pip不能，需要依赖virtualenv之类的。
@@ -289,7 +299,7 @@ conda update python
 4. conda安装的包会统一下载到一个目录文件中，当环境B需要下载的包，之前其他环境安装过，就只需要把之间下载的文件复制到环境B中，下载一次多次安装。pip是直接下载到对应环境中。
 5. conda只能在conda管理的环境中使用，例如比如conda所创建的虚环境中使用。pip可以在任何环境中使用，在conda创建的环境 中使用pip命令，需要先安装pip（conda install pip ），然后可以 环境A 中使用pip 。conda 安装的包，pip可以卸载，但不能卸载依赖包，pip安装的包，只能用pip卸载。
 
-### 安装在哪里？
+#### 安装在哪里？
 
 - conda install xxx：这种方式安装的库都会放在anaconda3/pkgs目录下，这样的好处就是，当在某个环境下已经下载好了某个库，再在另一个环境中还需要这个库时，就可以直接从pkgs目录下将该库复制至新环境而不用重复下载。
   ```bash
@@ -321,6 +331,252 @@ conda update python
   
 - pip install xxx：分两种情况，一种情况就是当前conda环境的python是conda安装的，和系统的不一样，那么xxx会被安装到anaconda3/envs/current_env/lib/python3.x/site-packages文件夹中，如果当前conda环境用的是系统的python，那么xxx会通常会被安装到~/.local/lib/python3.x/site-packages文件夹中 
 
-### 如何判断conda中某个包是通过conda还是pip安装的？
+#### 如何判断conda中某个包是通过conda还是pip安装的？
 
 行 `conda list` ，用pip安装的包显示的build项目为pypi
+
+
+
+
+
+---
+
+
+
+# uv
+
+## 从空文件开始
+
+从空文件夹开始，使用 `uv` 管理 Python 项目，可以遵循一个清晰、标准化的流程。
+
+`uv` 的强大之处在于，它能将**项目初始化、依赖管理、虚拟环境、运行脚本**等环节全部串联起来，让你只需几个命令就能完成从零到一的搭建。
+
+下面是一个标准的、从空文件夹开始的完整工作流：
+
+### 📂 第一步：安装与初始化项目
+
+首先，确保你已经安装了 `uv`。如果还没有，可以通过 `pip` 或 `pipx` 安装。
+
+```bash
+# 通过 pip 安装
+pip install uv
+```
+
+接下来，我们开始创建一个新项目：
+
+1.  **创建项目目录**：首先，创建一个新的空文件夹并进入。
+    ```bash
+    mkdir my-awesome-project
+    cd my-awesome-project
+    ```
+
+2.  **初始化项目**：在空文件夹中运行 `uv init` 命令。这会生成一个 Python 项目所需的基础文件。
+    ```bash
+    uv init
+    ```
+    执行后，`uv` 会创建以下几个核心文件:
+    *   `pyproject.toml`：项目的核心配置文件，所有依赖和元数据都在这里定义。
+    *   `main.py`：一个包含 "Hello World" 的示例 Python 文件。
+    *   `README.md`：项目的说明文档。
+    *   `.python-version`：指定项目使用的 Python 版本。
+
+    如果你需要创建一个更规范的、可发布的包（例如将代码放在 `src/` 目录下），可以使用 `--package` 参数：
+    ```bash
+    uv init --package
+    ```
+    
+    如果你需要创建一个更简单干净的环境，可以使用 `--no--package` 参数：
+    
+    ```bash
+    uv init --no--package
+    ```
+    
+    
+
+### ⚙️ 第二步：管理依赖与环境
+
+这是 `uv` 最核心的环节。它极大地简化了依赖和虚拟环境的管理。
+
+1.  **添加依赖**：使用 `uv add` 命令来安装项目依赖。`uv` 会自动将依赖添加到 `pyproject.toml` 文件中，并更新锁文件。
+    ```bash
+    # 添加 requests 库作为项目依赖
+    uv add requests
+    ```
+    你也可以添加仅在开发时需要的依赖（如 `pytest`, `ruff`, `mypy`）：
+    ```bash
+    # 添加 ruff 作为开发依赖
+    uv add --dev ruff
+    ```
+    `--dev` 参数会将依赖添加到 `[tool.uv.dev-dependencies]` 部分。
+
+2.  **同步环境**：`uv sync` 命令会根据 `pyproject.toml` 和 `uv.lock` 文件，自动创建一个 `.venv` 虚拟环境，并安装所有依赖。这是确保环境与项目配置一致的最佳实践。
+    ```bash
+    uv sync
+    ```
+
+### 🚀 第三步：运行项目与代码
+
+现在，你的项目环境已经就绪，可以开始编码和运行了。
+
+1.  **运行脚本**：使用 `uv run` 来执行 Python 文件。它会自动在项目的虚拟环境中运行你的代码，无需手动激活环境。
+    ```bash
+    # 运行默认生成的 main.py
+    uv run main.py
+    ```
+
+2.  **运行其他命令**：`uv run` 也可以用来执行环境中的其他工具，比如运行测试。
+    ```bash
+    # 假设你已经通过 uv add --dev pytest 安装了 pytest
+    uv run pytest
+    ```
+
+3.  **进入交互式环境**：你也可以用 `uv run` 启动一个 Python 交互式 shell，方便进行调试。
+    ```bash
+    uv run python
+    ```
+
+### 💎 总结
+
+总结一下，从空文件夹开始使用 `uv` 的完整命令序列就是：
+```bash
+# 1. 创建并进入项目目录
+mkdir my-project && cd my-project
+
+# 2. 初始化项目
+uv init
+
+# 3. 添加依赖 (例如 requests)
+uv add requests
+
+# 4. （可选）添加开发依赖
+uv add --dev pytest
+
+# 5. 同步并创建虚拟环境，安装所有依赖
+uv sync
+
+# 6. 运行你的代码
+uv run main.py
+```
+
+通过这几步，你就拥有了一个结构清晰、依赖明确、环境隔离的现代化 Python 项目。`uv` 将原本繁琐的环境配置工作变得异常简单高效。
+
+
+
+
+
+
+
+## 常用命令
+
+
+
+**创建虚拟环境**
+
+```bash
+uv venv
+```
+
+**安装依赖**
+
+```bash 
+uv add package # 若该包依赖其他包会一同安装
+```
+
+安装会自动修改`pyproject.py`和`uv.lock`
+
+> pyproject.py :
+>
+> 自动添加dependencies
+
+> uv.lock 自动写入 无需手动修改
+
+
+
+**查看当前环境依赖**
+
+```bash
+uv tree
+```
+
+
+
+**运行文件**
+
+```bash
+uv run main.py
+```
+
+uv会使用当前项目的虚拟环境运行py文件
+
+
+
+**项目分发**
+
+```bash
+uv sync
+```
+
+clone项目拿到手后，在项目目录运行该命令就会根据`pyproject.py`和`uv.lock`创建虚拟环境
+
+
+
+**删除依赖**
+
+```bash
+uv remove 包名
+```
+
+
+
+**安装指定python**
+
+```bash
+uv python install cpython3.12
+```
+
+**指定项目python版本号**
+
+```python
+uv python pin 3.12
+```
+
+**查看已安装和未安装的python版本**
+
+```python
+uv python list
+```
+
+**更新自身**
+
+```bash
+uv self update
+```
+
+**卸载**
+
+```bash
+uv uv self uvinstall
+```
+
+**安装uv配套的工具**
+
+```python
+uv tool install ruff
+```
+
+**用工具检查语法格式以及代码问题**
+
+```bash
+ruff check main.py
+```
+
+
+
+
+
+
+
+
+
+
+

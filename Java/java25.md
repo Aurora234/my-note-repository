@@ -1116,3 +1116,110 @@ String res3 = listString.get(0);
 int len = listString.size();
 ```
 
+
+
+
+
+## 泛型
+
+Java 中的泛型（Generics）是 JDK 5 引入的一个非常重要的特性。简单来说，它允许我们在定义类、接口或方法时使用**类型参数**，从而实现代码的复用和类型安全。
+
+### 1. 基本概念
+
+- **类型安全（编译期检查）**：这是泛型最核心的作用。在没有泛型之前，集合（如 `ArrayList`）可以放入任何类型的对象，取出时需要进行强制类型转换，一旦转错就会在运行时报错（`ClassCastException`）。有了泛型后，编译器会在编译阶段就检查类型是否匹配，把错误提前暴露。
+- **消除强制类型转换**：因为编译器已经知道了集合中元素的类型，所以我们在取出元素时，不再需要手动进行 `(String)` 或 `(Integer)` 这样的强制转换，代码更简洁。
+- **代码复用**：通过泛型，我们可以编写一套通用的代码（比如一个排序算法或一个缓存类），让它能够适用于多种数据类型，而不需要为每种类型都写一份相同的代码。
+- **类型擦除（Type Erasure）**：这是 Java 泛型的一个底层机制。Java 的泛型只在**编译期**有效，在编译后的字节码中，泛型类型参数会被替换为它们的边界类型（通常是 `Object`），并自动插入必要的类型转换代码。这也是为什么 Java 泛型不能用于基本数据类型（如 `int`，必须用 `Integer`）以及不能直接 `new T()` 的原因。
+
+------
+
+### 2. 简单示例
+
+#### 示例一：泛型在集合中的基础应用
+
+这是日常开发中最常见的场景。
+
+```java
+import java.util.ArrayList;
+import java.util.List;
+
+public class GenericListDemo {
+    public static void main(String[] args) {
+        // 1. 不使用泛型（不推荐）
+        List list1 = new ArrayList();
+        list1.add("Hello");
+        list1.add(123); // 编译不报错，但混入了 Integer
+        String str1 = (String) list1.get(1); // 运行时报错：ClassCastException
+
+        // 2. 使用泛型（推荐）
+        List<String> list2 = new ArrayList<>();
+        list2.add("Hello");
+        // list2.add(123); // 编译直接报错！阻止了非法类型的加入
+        
+        String str2 = list2.get(0); // 无需强制类型转换，直接获取 String
+        System.out.println(str2); // 输出: Hello
+    }
+}
+```
+
+#### 示例二：自定义泛型类
+
+你可以把泛型当作一个“占位符”，在实例化时再决定它具体是什么类型。
+
+```java
+// 定义一个通用的盒子类，T 就是类型参数（通常用 T, E, K, V 等单字母表示）
+public class Box<T> {
+    private T content;
+
+    public void put(T item) {
+        this.content = item;
+    }
+
+    public T get() {
+        return content;
+    }
+
+    public static void main(String[] args) {
+        // 实例化时指定 T 为 String
+        Box<String> stringBox = new Box<>();
+        stringBox.put("Java泛型");
+        String value = stringBox.get(); // 自动推断为 String
+        System.out.println(value);
+
+        // 实例化时指定 T 为 Integer
+        Box<Integer> intBox = new Box<>();
+        intBox.put(100);
+        int num = intBox.get(); // 自动拆箱
+        System.out.println(num);
+    }
+}
+```
+
+#### 示例三：泛型方法
+
+泛型不仅可以定义在类上，也可以单独定义在方法上。即使所在的类不是泛型类，方法也可以是泛型的。
+
+```java
+public class GenericMethodDemo {
+    // <E> 声明这是一个泛型方法，E 是类型参数
+    // 返回值类型和参数类型都使用了 E
+    public static <E> void printArray(E[] array) {
+        for (E element : array) {
+            System.out.print(element + " ");
+        }
+        System.out.println();
+    }
+
+    public static void main(String[] args) {
+        Integer[] intArray = {1, 2, 3};
+        String[] strArray = {"A", "B", "C"};
+
+        // 编译器会根据传入的参数自动推断 E 的类型
+        printArray(intArray); // 输出: 1 2 3
+        printArray(strArray); // 输出: A B C
+    }
+}
+```
+
+**总结一下：**
+泛型就像是**带类型的模具**。你在设计模具（写代码）的时候不需要关心具体要生产什么形状的零件，但当你真正投入生产（实例化对象/调用方法）时，必须明确指定类型。这样既保证了生产过程的通用性，又保证了最终产品的安全性。

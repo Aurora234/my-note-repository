@@ -1589,3 +1589,63 @@ for f in funcs:
     print(f())  # 输出：0, 1, 2 ✅
 ```
 
+
+
+# 装饰器
+
+Python 的装饰器（Decorator）是 Python 语言中一个极具表现力和实用价值的核心高级特性。简单来说，它允许你在**不修改原函数代码**的情况下，动态地给函数添加额外的功能。
+
+它的本质是一个**高阶函数**（接收函数作为参数，并返回一个新的函数），而 `@` 符号只是一个让代码更简洁、易读的“语法糖”。
+
+**示例：**
+
+一个标准的装饰器通常包含三层结构：外层接收原函数，内层定义包装逻辑（wrapper），并返回这个包装函数。
+
+```python
+import functools
+
+def my_decorator(func):
+    @functools.wraps(func)  # 保留原函数的元信息（如函数名、文档字符串）
+    def wrapper(*args, **kwargs): # 这个函数名无所谓，但最后必须返回这个函数名
+        # 在原函数调用前执行的逻辑（例如：记录日志、权限校验）
+        print("函数执行前")
+        
+        result = func(*args, **kwargs)  # 调用原函数，并接收返回值
+        
+        # 在原函数调用后执行的逻辑（例如：性能统计、资源清理）
+        print("函数执行后")
+        
+        return result
+    return wrapper # 最后必须返回这个函数名
+
+@my_decorator # 名字必须和装饰器函数名一样
+def say_hello(name):
+    """打招呼的函数"""
+    print(f"Hello, {name}!")
+    return "Greeted"
+
+# 调用时，实际执行的是 wrapper
+say_hello("千问")
+```
+
+- 原理：当调用`say_hello("千问")`时，实际执行了`my_decorator(say_hello)`
+- 参数：`*args, **kwargs`：动态参数，无论say_hello有多少个参数，都可以被wrapper正常接收
+- 返回值：必须要在`wrapper`里面再次返回原函数func的返回值
+
+**注释：**
+
+> `@functools.wraps(func)` 是编写装饰器时的一个**最佳实践**，它的核心作用是**“保鲜”**——即保留原函数的“身份信息”。
+>
+> 如果没有它，被装饰的函数会“丢失”原本的元数据（如函数名、文档字符串），变成装饰器内部那个通用的 `wrapper` 函数。
+>
+> `@functools.wraps(func)` 本质上是调用了 `update_wrapper` 函数，它主要帮你拷贝了原函数的以下属性到包装函数上：
+>
+> - **`__name__`**: 函数名（用于调试和识别）。
+> - **`__doc__`**: 文档字符串（用于帮助文档）。
+> - **`__module__`**: 模块名。
+> - **`__qualname__`**: 限定名。
+> - **`__annotations__`**: 类型注解（这对现代 Python 的类型检查非常重要）。
+> - **`__dict__`**: 函数的自定义属性。
+>
+> **`@functools.wraps(func)` 是装饰器的“身份证保护器”**
+
